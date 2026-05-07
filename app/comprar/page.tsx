@@ -17,6 +17,7 @@ export default function ComprarPage() {
   const [brand, setBrand] = useState(searchParams.get("brand") || "all")
   const [priceRange, setPriceRange] = useState(searchParams.get("price") || "all")
   const [sortBy, setSortBy] = useState("recent")
+// Prueba de vinculación con Jira AM-23
 
   // 🔥 Cargar autos reales desde backend
   useEffect(() => {
