@@ -19,7 +19,6 @@ export default function ComprarPage() {
   const [sortBy, setSortBy] = useState("recent")
 // Prueba de vinculación con Jira AM-23
 
-  // 🔥 Cargar autos reales desde backend
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/cars")
       .then(res => res.json())
