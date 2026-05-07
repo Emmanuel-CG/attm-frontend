@@ -1,0 +1,216 @@
+"use client"
+
+import Image from "next/image"
+import Link from "next/link"
+import { Navbar } from "@/components/navbar"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import {
+  MapPin,
+  Gauge,
+  Calendar,
+  Fuel,
+  Settings,
+  Palette,
+  Phone,
+  Mail,
+  User,
+  ArrowLeft,
+  Share2,
+  CheckCircle,
+} from "lucide-react"
+import { useState } from "react"
+import { ContactModal } from "@/components/contact-modal"
+import { CallModal } from "@/components/call-modal"
+
+interface CarData {
+  id: string
+  brand: string
+  model: string
+  year: number
+  price: number
+  mileage: number
+  transmission: string
+  fuelType: string
+  color: string
+  description: string
+  images: string[]
+  location: string
+  sellerId: string
+  sellerName: string
+  sellerPhone: string
+  createdAt: string
+  featured?: boolean
+  verified?: boolean
+}
+
+interface CarDetailContentProps {
+  car: CarData
+}
+
+export function CarDetailContent({ car }: CarDetailContentProps) {
+  const [showMessageModal, setShowMessageModal] = useState(false)
+  const [showCallModal, setShowCallModal] = useState(false)
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <Navbar />
+
+      <div className="container mx-auto px-4 py-8">
+        <Link href="/comprar" className="mb-4 flex items-center gap-2 text-primary hover:underline">
+          <ArrowLeft className="h-4 w-4" />
+          Volver
+        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Columna principal */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Imagen principal */}
+            <Card className="overflow-hidden">
+              <div className="relative h-96 bg-muted">
+                <Image
+                  src={car.images[0] || "/placeholder.svg?height=400&width=600"}
+                  alt={`${car.brand} ${car.model}`}
+                  fill
+                  className="object-cover"
+                />
+                {car.featured && <Badge className="absolute top-4 right-4 bg-primary">Destacado</Badge>}
+              </div>
+            </Card>
+
+            {/* Informacion del auto */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h1 className="text-3xl font-bold mb-2">
+                      {car.brand} {car.model}
+                    </h1>
+                    <p className="text-4xl font-bold text-primary">${car.price.toLocaleString("es-MX")}</p>
+                  </div>
+                  <Button variant="outline" size="icon">
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Ano</p>
+                      <p className="font-semibold">{car.year}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Gauge className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Kilometraje</p>
+                      <p className="font-semibold">{car.mileage.toLocaleString()} km</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Settings className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Transmision</p>
+                      <p className="font-semibold">{car.transmission}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Fuel className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Combustible</p>
+                      <p className="font-semibold">{car.fuelType}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Palette className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Color</p>
+                      <p className="font-semibold">{car.color}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Ubicacion</p>
+                      <p className="font-semibold">{car.location}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-bold mb-3">Descripcion</h2>
+                  <p className="text-muted-foreground leading-relaxed">{car.description}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar - Informacion del vendedor */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-24">
+              <CardContent className="p-6">
+                <h2 className="text-xl font-bold mb-4">Informacion del Vendedor</h2>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <User className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Vendedor</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="font-semibold">{car.sellerName}</p>
+                        {car.verified && (
+                          <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-full">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="text-xs font-semibold text-green-600">Verificado</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <Phone className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Telefono</p>
+                      <p className="font-semibold">{car.sellerPhone}</p>
+                    </div>
+                  </div>
+                  <Button className="w-full" size="lg" onClick={() => setShowCallModal(true)}>
+                    <Phone className="h-4 w-4 mr-2" />
+                    Contactar Vendedor
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full bg-transparent"
+                    size="lg"
+                    onClick={() => setShowMessageModal(true)}
+                  >
+                    <Mail className="h-4 w-4 mr-2" />
+                    Enviar Mensaje
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {showMessageModal && (
+        <ContactModal
+          carId={car.id}
+          carName={`${car.brand} ${car.model}`}
+          sellerName={car.sellerName}
+          onClose={() => setShowMessageModal(false)}
+        />
+      )}
+
+      {showCallModal && (
+        <CallModal sellerName={car.sellerName} sellerPhone={car.sellerPhone} onClose={() => setShowCallModal(false)} />
+      )}
+    </div>
+  )
+}
