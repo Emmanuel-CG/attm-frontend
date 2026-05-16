@@ -13,7 +13,7 @@ export default function HomePage() {
   const [featuredCars, setFeaturedCars] = useState<Car[]>([])
 
 useEffect(() => {
-  fetch("http://127.0.0.1:8000/api/cars")
+  fetch("https://attm-backend-main-gvzubr.laravel.cloud/api/cars")
     .then((res) => res.json())
     .then((data) => {
       const destacados = data.slice(0, 6)
