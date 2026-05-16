@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { AlertCircle, CheckCircle, Upload, FileCheck, Lock, Eye, EyeOff } from 'lucide-react'
+import { AlertCircle, CheckCircle, Lock, Eye, EyeOff } from 'lucide-react'
 
 export function ProfileForm() {
   const { user, updateProfile } = useAuth()
@@ -31,7 +31,6 @@ export function ProfileForm() {
   })
 
   const [documents, setDocuments] = useState({
-    ine: user?.ine || "",
     curp: user?.curp || "",
     rfc: user?.rfc || "",
     domicile: user?.domicile || "",
@@ -42,28 +41,21 @@ export function ProfileForm() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target
-    if (files && files[0]) {
-      const file = files[0]
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setDocuments((prev) => ({
-          ...prev,
-          [name]: reader.result as string,
-        }))
-      }
-      reader.readAsDataURL(file)
-    }
+  const handleDocChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setDocuments((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      await updateProfile({ ...formData, ...documents })
+      // Verificar si tiene todos los documentos para marcar como verificado
+      const isVerified = !!(documents.curp && documents.rfc && documents.domicile)
+      await updateProfile({ ...formData, ...documents, verified: isVerified })
       setSuccess(true)
       setIsEditing(false)
+      setIsVerifying(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (error) {
       console.error("Error updating profile:", error)
@@ -240,12 +232,23 @@ export function ProfileForm() {
         </div>
         
         <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-blue-600" />
-              <span className="text-sm font-medium text-blue-900">Cuenta verificada</span>
+          {user.verified ? (
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <span className="text-sm font-medium text-green-900">Cuenta verificada</span>
+              </div>
+              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">Verificado</span>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-200">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-amber-600" />
+                <span className="text-sm font-medium text-amber-900">Cuenta no verificada</span>
+              </div>
+              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium">Pendiente</span>
+            </div>
+          )}
           
           <div className="text-sm text-muted-foreground">
             <p className="font-medium text-foreground mb-3">Información de la Cuenta</p>
@@ -257,7 +260,7 @@ export function ProfileForm() {
 
         {isVerifying ? (
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(e) }} className="mt-6 pt-6 border-t border-border space-y-6">
-            <p className="font-medium text-foreground">Carga tus Documentos de Verificación</p>
+            <p className="font-medium text-foreground">Ingresa tus Datos de Verificacion</p>
             
             <div className="bg-gray-50 p-4 rounded-lg space-y-3">
               <div className="flex items-start gap-3">
@@ -267,23 +270,25 @@ export function ProfileForm() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">Identificación Oficial</h4>
-                  <p className="text-sm text-muted-foreground mt-1">INE o Pasaporte</p>
+                  <h4 className="font-semibold text-foreground">CURP</h4>
+                  <p className="text-sm text-muted-foreground mt-1">Clave Unica de Registro de Poblacion</p>
                 </div>
               </div>
               <div className="ml-11">
-                <input
-                  type="file"
-                  name="ine"
-                  onChange={handleFileChange}
-                  accept="image/*,application/pdf"
-                  className="w-full px-3 py-2 border border-border rounded-md text-sm"
+                <Input
+                  type="text"
+                  name="curp"
+                  value={documents.curp}
+                  onChange={handleDocChange}
+                  placeholder="Ej: ABCD123456HDFRRN01"
+                  maxLength={18}
+                  className="w-full uppercase"
                 />
-                {documents.ine && (
-                  <div className="flex items-center gap-2 mt-2 text-green-600">
-                    <FileCheck className="h-4 w-4" />
-                    <span className="text-sm">Documento cargado</span>
-                  </div>
+                {documents.curp && documents.curp.length === 18 && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" />
+                    CURP registrado
+                  </p>
                 )}
               </div>
             </div>
@@ -296,19 +301,26 @@ export function ProfileForm() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">CURP</h4>
-                  <p className="text-sm text-muted-foreground mt-1">Clave Única de Registro de Población</p>
+                  <h4 className="font-semibold text-foreground">RFC</h4>
+                  <p className="text-sm text-muted-foreground mt-1">Registro Federal de Contribuyentes</p>
                 </div>
               </div>
               <div className="ml-11">
                 <Input
                   type="text"
-                  name="curp"
-                  value={documents.curp}
-                  onChange={(e) => setDocuments({ ...documents, curp: e.target.value })}
-                  placeholder="Ej: ABCD123456HDFRRN01"
-                  className="w-full"
+                  name="rfc"
+                  value={documents.rfc}
+                  onChange={handleDocChange}
+                  placeholder="Ej: ABC123456XYZ"
+                  maxLength={13}
+                  className="w-full uppercase"
                 />
+                {documents.rfc && documents.rfc.length >= 12 && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" />
+                    RFC registrado
+                  </p>
+                )}
               </div>
             </div>
 
@@ -320,54 +332,31 @@ export function ProfileForm() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">RFC</h4>
-                  <p className="text-sm text-muted-foreground mt-1">Registro Federal de Contribuyentes</p>
+                  <h4 className="font-semibold text-foreground">Comprobante de Domicilio</h4>
+                  <p className="text-sm text-muted-foreground mt-1">Ingresa tu direccion completa</p>
                 </div>
               </div>
-              <div className="ml-11">
+              <div className="ml-11 space-y-3">
                 <Input
                   type="text"
-                  name="rfc"
-                  value={documents.rfc}
-                  onChange={(e) => setDocuments({ ...documents, rfc: e.target.value })}
-                  placeholder="Ej: ABC123456XYZ"
+                  name="domicile"
+                  value={documents.domicile}
+                  onChange={handleDocChange}
+                  placeholder="Calle, numero exterior e interior"
                   className="w-full"
                 />
-              </div>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10">
-                    <span className="text-sm font-semibold text-primary">4</span>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">Comprobante de Domicilio</h4>
-                  <p className="text-sm text-muted-foreground mt-1">Recibo de servicios, contrato de arrendamiento, etc.</p>
-                </div>
-              </div>
-              <div className="ml-11">
-                <input
-                  type="file"
-                  name="domicile"
-                  onChange={handleFileChange}
-                  accept="image/*,application/pdf"
-                  className="w-full px-3 py-2 border border-border rounded-md text-sm"
-                />
                 {documents.domicile && (
-                  <div className="flex items-center gap-2 mt-2 text-green-600">
-                    <FileCheck className="h-4 w-4" />
-                    <span className="text-sm">Documento cargado</span>
-                  </div>
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" />
+                    Domicilio registrado
+                  </p>
                 )}
               </div>
             </div>
 
             <div className="flex gap-2 pt-2">
               <Button type="submit" disabled={loading}>
-                {loading ? "Guardando..." : "Guardar Documentos"}
+                {loading ? "Guardando..." : "Guardar Datos"}
               </Button>
               <Button type="button" variant="outline" onClick={() => setIsVerifying(false)}>
                 Cancelar
@@ -376,20 +365,12 @@ export function ProfileForm() {
           </form>
         ) : (
           <div className="mt-6 pt-6 border-t border-border">
-            <p className="font-medium text-foreground mb-4">Documentos Verificados</p>
+            <p className="font-medium text-foreground mb-4">Datos de Verificacion</p>
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-foreground">INE / Pasaporte</span>
-                {documents.ine ? (
-                  <FileCheck className="h-5 w-5 text-green-600" />
-                ) : (
-                  <span className="text-xs text-muted-foreground">Pendiente</span>
-                )}
-              </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <span className="text-sm text-foreground">CURP</span>
                 {documents.curp ? (
-                  <FileCheck className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-mono font-medium text-foreground">{documents.curp.toUpperCase()}</span>
                 ) : (
                   <span className="text-xs text-muted-foreground">Pendiente</span>
                 )}
@@ -397,15 +378,15 @@ export function ProfileForm() {
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <span className="text-sm text-foreground">RFC</span>
                 {documents.rfc ? (
-                  <FileCheck className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-mono font-medium text-foreground">{documents.rfc.toUpperCase()}</span>
                 ) : (
                   <span className="text-xs text-muted-foreground">Pendiente</span>
                 )}
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-foreground">Comprobante de Domicilio</span>
+                <span className="text-sm text-foreground">Domicilio</span>
                 {documents.domicile ? (
-                  <FileCheck className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-medium text-foreground">{documents.domicile}</span>
                 ) : (
                   <span className="text-xs text-muted-foreground">Pendiente</span>
                 )}
