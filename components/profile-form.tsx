@@ -222,14 +222,6 @@ export function ProfileForm() {
               <span className="text-sm text-muted-foreground">Teléfono</span>
               <span className="font-medium text-foreground">{user.phone}</span>
             </div>
-            <div className="flex justify-between items-start py-3 border-b border-border/50">
-              <span className="text-sm text-muted-foreground">Ubicación</span>
-              <span className="font-medium text-foreground">{user.location || "No especificado"}</span>
-            </div>
-            <div className="flex justify-between items-start py-3">
-              <span className="text-sm text-muted-foreground">Biografía</span>
-              <span className="font-medium text-foreground text-right">{user.bio || "No especificada"}</span>
-            </div>
           </div>
         )}
       </div>
