@@ -294,22 +294,78 @@ const res = await fetch(
                 <div className="space-y-2">
                   <Label>Fotos del Auto</Label>
 <div className="space-y-3">
+<div className="space-y-4">
+  <label
+    htmlFor="images"
+    className="border-2 border-dashed border-blue-300 hover:border-blue-500 bg-blue-50 hover:bg-blue-100 transition-all rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer"
+  >
+    <Upload className="h-12 w-12 text-blue-500 mb-3" />
+
+    <p className="text-base font-semibold text-gray-700">
+      Haz clic para subir fotos
+    </p>
+
+    <p className="text-sm text-gray-500 mt-1">
+      Máximo 5 imágenes JPG PNG WEBP
+    </p>
+
+    <p className="text-xs text-gray-400 mt-2">
+      Tamaño máximo 4MB por imagen
+    </p>
+  </label>
+
   <input
+    id="images"
     type="file"
     multiple
-    accept="image/*"
+    accept="image/png,image/jpeg,image/webp"
+    className="hidden"
     onChange={(e) => {
-      if (e.target.files) {
-        setImages(Array.from(e.target.files))
+      if (!e.target.files) return
+
+      const files = Array.from(e.target.files)
+
+      // máximo 5 imágenes
+      if (files.length > 3) {
+        alert("Solo puedes subir máximo 3 imágenes")
+        return
       }
+
+      // validar tamaño
+      const invalidFile = files.find(
+        (file) => file.size > 4 * 1024 * 1024
+      )
+
+      if (invalidFile) {
+        alert("Cada imagen debe pesar menos de 4MB")
+        return
+      }
+
+      setImages(files)
     }}
   />
 
   {images.length > 0 && (
-    <div className="text-sm text-green-600">
-      {images.length} imagen(es) seleccionada(s)
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {images.map((image, index) => (
+        <div
+          key={index}
+          className="relative rounded-lg overflow-hidden border bg-white shadow-sm"
+        >
+          <img
+            src={URL.createObjectURL(image)}
+            alt="preview"
+            className="w-full h-32 object-cover"
+          />
+
+          <div className="p-2 text-xs text-center text-gray-600 truncate">
+            {image.name}
+          </div>
+        </div>
+      ))}
     </div>
   )}
+</div>
 </div>
                 </div>
 
