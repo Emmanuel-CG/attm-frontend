@@ -1,16 +1,25 @@
 "use client"
 
+import axios from "axios"
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import type { User } from "./types"
 
-const API_BASE_URL = "http://localhost:8000/api"
+const API_BASE_URL = "https://attm-backend-main-gvzubr.laravel.cloud/api"
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+})
 
 interface AuthContextType {
   user: User | null
   token: string | null
   login: (email: string, password: string) => Promise<boolean>
   register: (email: string, password: string, name: string, phone: string) => Promise<boolean>
-  logout: () => void
+  logout: () => void  
   updateProfile: (updatedUser: Partial<User>) => Promise<boolean>
   isAuthenticated: boolean
   isAdmin: boolean
@@ -33,91 +42,109 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // 2. Login: Conecta con AuthController@login
-  const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
-      if (!res.ok) return false
+const login = async (email: string, password: string): Promise<boolean> => {
+  try {
+    const res = await api.post("/login", {
+      email,
+      password,
+    })
 
-      setToken(data.token)
-      setUser(data.user)
-      localStorage.setItem("authToken", data.token)
-      localStorage.setItem("automarket_user", JSON.stringify(data.user))
-      return true
-    } catch (e) {
-      console.error("Error login:", e)
-      return false
-    }
+    const data = res.data
+
+    setToken(data.token)
+    setUser(data.user)
+
+    localStorage.setItem("authToken", data.token)
+    localStorage.setItem("automarket_user", JSON.stringify(data.user))
+
+    return true
+  } catch (e) {
+    console.error("Error login:", e)
+    return false
   }
+}
 
   // 3. Registro: Conecta con AuthController@register
-  const register = async (email: string, password: string, name: string, phone: string): Promise<boolean> => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ email, password, name, phone }),
-      })
-      const data = await res.json()
-      if (!res.ok) return false
+const register = async (
+  email: string,
+  password: string,
+  name: string,
+  phone: string
+): Promise<boolean> => {
+  try {
+    const res = await api.post("/register", {
+      email,
+      password,
+      name,
+      phone,
+    })
 
-      // Login automático tras registro
-      setToken(data.token)
-      setUser(data.user)
-      localStorage.setItem("authToken", data.token)
-      localStorage.setItem("automarket_user", JSON.stringify(data.user))
-      return true
-    } catch (e) {
-      console.error("Error register:", e)
-      return false
-    }
+    const data = res.data
+
+    setToken(data.token)
+    setUser(data.user)
+
+    localStorage.setItem("authToken", data.token)
+    localStorage.setItem("automarket_user", JSON.stringify(data.user))
+
+    return true
+  } catch (e) {
+    console.error("Error register:", e)
+    return false
   }
+}
 
   // 4. Update: Conecta con AuthController@updateProfile
-  const updateProfile = async (updatedUser: Partial<User>): Promise<boolean> => {
-    if (!token) return false
-    try {
-      const res = await fetch(`${API_BASE_URL}/update-profile`, {
-        method: "POST", // O PUT según tu ruta de Laravel
-        headers: { 
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": token // Token directo sin Bearer
-        },
-        body: JSON.stringify(updatedUser),
-      })
-      const data = await res.json()
-      if (!res.ok) return false
+const updateProfile = async (updatedUser: Partial<User>): Promise<boolean> => {
+  if (!token) return false
 
-      setUser(data.user)
-      localStorage.setItem("automarket_user", JSON.stringify(data.user))
-      return true
-    } catch (e) {
-      console.error("Error updateProfile:", e)
-      return false
-    }
+  try {
+    const res = await api.post(
+      "/update-profile",
+      updatedUser,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    )
+
+    const data = res.data
+
+    setUser(data.user)
+    localStorage.setItem("automarket_user", JSON.stringify(data.user))
+
+    return true
+  } catch (e) {
+    console.error("Error updateProfile:", e)
+    return false
   }
+}
 
   // 5. Logout: Conecta con AuthController@logout
-  const logout = () => {
+const logout = async () => {
+  try {
     if (token) {
-      fetch(`${API_BASE_URL}/logout`, {
-        method: "POST",
-        headers: { 
-          "Authorization": token,
-          "Accept": "application/json"
+      await api.post(
+        "/logout",
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
         }
-      })
+      )
     }
-    setUser(null)
-    setToken(null)
-    localStorage.removeItem("automarket_user")
-    localStorage.removeItem("authToken")
+  } catch (e) {
+    console.error("Error logout:", e)
   }
+
+  setUser(null)
+  setToken(null)
+
+  localStorage.removeItem("automarket_user")
+  localStorage.removeItem("authToken")
+}
 
   return (
     <AuthContext.Provider

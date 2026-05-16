@@ -17,9 +17,20 @@ import {
   Mail,
   User,
   ArrowLeft,
-  Share2,
   CheckCircle,
+  Flag,
+  AlertTriangle,
+  UserX,
+  ImageOff,
+  DollarSign,
 } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 import { ContactModal } from "@/components/contact-modal"
 import { CallModal } from "@/components/call-modal"
@@ -52,6 +63,15 @@ interface CarDetailContentProps {
 export function CarDetailContent({ car }: CarDetailContentProps) {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showCallModal, setShowCallModal] = useState(false)
+  const { toast } = useToast()
+  const handleReport = (reason: string) => {
+  toast({
+    title: "Reporte exitoso",
+    description: `Has reportado este anuncio por: ${reason}`,
+  })
+}
+  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -82,16 +102,75 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
             {/* Informacion del auto */}
             <Card>
               <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
                     <h1 className="text-3xl font-bold mb-2">
                       {car.brand} {car.model}
                     </h1>
                     <p className="text-4xl font-bold text-primary">${car.price.toLocaleString("es-MX")}</p>
                   </div>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
+<div className="flex-shrink-0">
+  <DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline" size="icon">
+      <Flag className="h-4 w-4" />
+    </Button>
+  </DropdownMenuTrigger>
+
+  <DropdownMenuContent
+    align="end"
+    className="w-56"
+  >
+    <DropdownMenuItem
+      className="cursor-pointer"
+      onClick={() =>
+        handleReport(
+          "Anuncio Fraudulento"
+        )
+      }
+    >
+      <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
+      Anuncio Fraudulento
+    </DropdownMenuItem>
+
+    <DropdownMenuItem
+      className="cursor-pointer"
+      onClick={() =>
+        handleReport(
+          "Usuario Sospechoso"
+        )
+      }
+    >
+      <UserX className="h-4 w-4 mr-2 text-orange-500" />
+      Usuario Sospechoso
+    </DropdownMenuItem>
+
+    <DropdownMenuItem
+      className="cursor-pointer"
+      onClick={() =>
+        handleReport(
+          "Fotos Inapropiadas"
+        )
+      }
+    >
+      <ImageOff className="h-4 w-4 mr-2 text-purple-500" />
+      Fotos Inapropiadas
+    </DropdownMenuItem>
+
+    <DropdownMenuItem
+      className="cursor-pointer"
+      onClick={() =>
+        handleReport(
+          "Precio Sospechoso"
+        )
+      }
+    >
+      <DollarSign className="h-4 w-4 mr-2 text-yellow-600" />
+      Precio Sospechoso
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+  </DropdownMenu>
+</div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

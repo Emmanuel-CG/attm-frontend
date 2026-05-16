@@ -4,9 +4,27 @@ import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Gauge, Calendar, Fuel, Settings, Palette, ArrowLeft, Share2 } from "lucide-react"
+import {
+  MapPin,
+  Gauge,
+  Calendar,
+  Fuel,
+  Settings,
+  Palette,
+  ArrowLeft,
+  Flag,
+  AlertTriangle,
+  UserX,
+  ImageOff,
+  DollarSign,
+} from "lucide-react"
 import { ContactSection } from "@/components/contact-section"
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 const API_BASE_URL = "http://localhost:8000/api"
 
 async function getCar(id: string) {
@@ -89,9 +107,38 @@ const imageUrl =
                       ${car.price.toLocaleString("es-MX")}
                     </p>
                   </div>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline" size="icon">
+      <Flag className="h-4 w-4 text-red-500" />
+    </Button>
+  </DropdownMenuTrigger>
+
+  <DropdownMenuContent
+    align="end"
+    className="w-56"
+  >
+    <DropdownMenuItem>
+      <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
+      Anuncio Fraudulento
+    </DropdownMenuItem>
+
+    <DropdownMenuItem>
+      <UserX className="h-4 w-4 mr-2 text-orange-500" />
+      Usuario Sospechoso
+    </DropdownMenuItem>
+
+    <DropdownMenuItem>
+      <ImageOff className="h-4 w-4 mr-2 text-purple-500" />
+      Fotos Inapropiadas
+    </DropdownMenuItem>
+
+    <DropdownMenuItem>
+      <DollarSign className="h-4 w-4 mr-2 text-yellow-600" />
+      Precio Sospechoso
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
