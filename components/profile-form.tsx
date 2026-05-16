@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,6 +35,23 @@ export function ProfileForm() {
     rfc: user?.rfc || "",
     domicile: user?.domicile || "",
   })
+
+  useEffect(() => {
+  if (user) {
+    setFormData({
+      name: user.name || "",
+      phone: user.phone || "",
+      location: user.location || "",
+      bio: user.bio || "",
+    })
+
+    setDocuments({
+      curp: user.curp || "",
+      rfc: user.rfc || "",
+      domicile: user.domicile || "",
+    })
+  }
+}, [user])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
