@@ -18,6 +18,7 @@ export default function VenderPage() {
   const { isAuthenticated, user, token } = useAuth()
   const router = useRouter()
   const [submitted, setSubmitted] = useState(false)
+  const [images, setImages] = useState<File[]>([])
 
   const [formData, setFormData] = useState({
     brand: "",
@@ -46,20 +47,27 @@ export default function VenderPage() {
     }
 
     try {
-      const res = await fetch("https://attm-backend-main-gvzubr.laravel.cloud/api/cars", {
-        method: "POST",
-        headers: {
-  "Content-Type": "application/json",
-  "Accept": "application/json",
-  ...(token ? { Authorization: token } : {})
-},
-        body: JSON.stringify({
-          ...formData,
-          year: Number(formData.year),
-          price: Number(formData.price),
-          mileage: Number(formData.mileage),
-        }),
-      })
+      const form = new FormData()
+
+Object.entries(formData).forEach(([key, value]) => {
+  form.append(key, value)
+})
+
+images.forEach((image) => {
+  form.append("images[]", image)
+})
+
+const res = await fetch(
+  "https://attm-backend-main-gvzubr.laravel.cloud/api/cars",
+  {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      ...(token ? { Authorization: token } : {}),
+    },
+    body: form,
+  }
+)
 
       if (!res.ok) {
         const error = await res.json()
@@ -285,11 +293,24 @@ export default function VenderPage() {
                 {/* Imágenes */}
                 <div className="space-y-2">
                   <Label>Fotos del Auto</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground mb-1">Haz clic para subir fotos</p>
-                    <p className="text-xs text-muted-foreground">Máximo 10 fotos (JPG, PNG)</p>
-                  </div>
+<div className="space-y-3">
+  <input
+    type="file"
+    multiple
+    accept="image/*"
+    onChange={(e) => {
+      if (e.target.files) {
+        setImages(Array.from(e.target.files))
+      }
+    }}
+  />
+
+  {images.length > 0 && (
+    <div className="text-sm text-green-600">
+      {images.length} imagen(es) seleccionada(s)
+    </div>
+  )}
+</div>
                 </div>
 
                 {/* Botones */}
