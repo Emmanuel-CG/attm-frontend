@@ -25,7 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-const API_BASE_URL = "http://localhost:8000/api"
+const API_BASE_URL = "https://attm-backend-main-gvzubr.laravel.cloud/api"
 
 async function getCar(id: string) {
   const res = await fetch(`${API_BASE_URL}/cars/${id}`, {

@@ -65,7 +65,7 @@ export default function RestablecerContrasenaPage() {
     setLoading(true)
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/reset-password", {
+      const res = await fetch("https://attm-backend-main-gvzubr.laravel.cloud/api/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -13,7 +13,7 @@ import { EditCarModal } from "@/components/edit-car-modal"
 import { Plus, Edit, Trash2, Eye, MapPin, Calendar, Gauge, MessageSquare } from "lucide-react"
 import type { Car } from "@/lib/types"
 
-const API_BASE_URL = "http://localhost:8000/api"
+const API_BASE_URL = "https://attm-backend-main-gvzubr.laravel.cloud/api"
 
 export default function MisAutosPage() {
   const { isAuthenticated, token } = useAuth()

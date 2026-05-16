@@ -46,7 +46,7 @@ export default function VenderPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/cars", {
+      const res = await fetch("https://attm-backend-main-gvzubr.laravel.cloud/api/cars", {
         method: "POST",
         headers: {
   "Content-Type": "application/json",
