@@ -115,7 +115,19 @@ export function ProfileForm() {
     setLoading(true)
     try {
       // Simular cambio de contraseña
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const token = localStorage.getItem("authToken")
+
+await fetch("https://attm-backend-main-gvzubr.laravel.cloud/api/change-password", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: token || "",
+  },
+  body: JSON.stringify({
+    currentPassword: passwordData.currentPassword,
+    newPassword: passwordData.newPassword,
+  }),
+})
       setPasswordSuccess(true)
       setIsChangingPassword(false)
       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
@@ -221,6 +233,14 @@ export function ProfileForm() {
             <div className="flex justify-between items-start py-3 border-b border-border/50">
               <span className="text-sm text-muted-foreground">Teléfono</span>
               <span className="font-medium text-foreground">{user.phone}</span>
+            </div>
+              <div className="flex justify-between items-start py-3 border-b border-border/50">
+              <span className="text-sm text-muted-foreground">Ubicación</span>
+              <span className="font-medium text-foreground">{user.location || "No especificado"}</span>
+            </div>
+            <div className="flex justify-between items-start py-3">
+              <span className="text-sm text-muted-foreground">Biografía</span>
+              <span className="font-medium text-foreground text-right">{user.bio || "No especificada"}</span>
             </div>
           </div>
         )}
