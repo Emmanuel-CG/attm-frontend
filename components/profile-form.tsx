@@ -128,7 +128,50 @@ await fetch("https://attm-backend-main-gvzubr.laravel.cloud/api/change-password"
     newPassword: passwordData.newPassword,
   }),
 })
-      setPasswordSuccess(true)
+      setLoading(true)
+
+try {
+  const token = localStorage.getItem("authToken")
+
+  const response = await fetch(
+    "https://attm-backend-main-gvzubr.laravel.cloud/api/change-password",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token || "",
+      },
+      body: JSON.stringify({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      }),
+    }
+  )
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    setPasswordError(data.error || "Error al cambiar contraseña")
+    return
+  }
+
+  setPasswordSuccess(true)
+  setIsChangingPassword(false)
+
+  setPasswordData({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  })
+
+  setTimeout(() => setPasswordSuccess(false), 3000)
+
+} catch (error) {
+  console.error(error)
+  setPasswordError("Error de conexión")
+} finally {
+  setLoading(false)
+}
       setIsChangingPassword(false)
       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
       setTimeout(() => setPasswordSuccess(false), 3000)
