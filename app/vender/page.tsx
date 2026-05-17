@@ -306,7 +306,7 @@ const res = await fetch(
     </p>
 
     <p className="text-sm text-gray-500 mt-1">
-      Máximo 5 imágenes JPG PNG WEBP
+      Máximo 3 imágenes JPG PNG WEBP
     </p>
 
     <p className="text-xs text-gray-400 mt-2">
@@ -345,26 +345,40 @@ const res = await fetch(
     }}
   />
 
-  {images.length > 0 && (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-      {images.map((image, index) => (
-        <div
-          key={index}
-          className="relative rounded-lg overflow-hidden border bg-white shadow-sm"
-        >
-          <img
-            src={URL.createObjectURL(image)}
-            alt="preview"
-            className="w-full h-32 object-cover"
-          />
+{images.length > 0 && (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {images.map((image, index) => (
+      <div
+        key={index}
+        className="relative rounded-xl overflow-hidden border bg-white shadow-sm"
+      >
+        <img
+          src={URL.createObjectURL(image)}
+          alt={`preview-${index}`}
+          className="w-full h-40 object-cover"
+        />
 
-          <div className="p-2 text-xs text-center text-gray-600 truncate">
+        <div className="p-3">
+          <p className="text-sm font-semibold text-gray-800">
+            {index === 0
+              ? "Foto principal del auto"
+              : `Foto adicional ${index}`}
+          </p>
+
+          <p className="text-xs text-gray-500 truncate mt-1">
             {image.name}
-          </div>
+          </p>
         </div>
-      ))}
-    </div>
-  )}
+
+        {index === 0 && (
+          <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full shadow">
+            Principal
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+)}
 </div>
 </div>
                 </div>
