@@ -63,7 +63,7 @@ const placeholderImages = [
 
 const imageUrl =
   car.images && car.images.length > 0
-    ? `/${car.images[0]}` // si las imágenes del car también están en public
+    ? car.images[0]
     : placeholderImages[Math.floor(Math.random() * placeholderImages.length)];
 
 
