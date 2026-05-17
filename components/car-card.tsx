@@ -21,6 +21,7 @@ export function CarCard({ car }: CarCardProps) {
       <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 h-full border-border hover:border-primary/50 hover:-translate-y-1">
         
         {/* Imagen segura */}
+        <div className="relative h-56 bg-muted overflow-hidden">
 <img
   src={imageUrl}
   alt={`${car.brand} ${car.model}`}
