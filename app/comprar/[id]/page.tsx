@@ -66,9 +66,6 @@ const imageUrl =
     ? car.images[0]
     : placeholderImages[Math.floor(Math.random() * placeholderImages.length)];
 
-console.log(car.images)
-console.log(imageUrl)
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Navbar />
@@ -85,10 +82,12 @@ console.log(imageUrl)
             {/* Imagen */}
             <Card className="overflow-hidden">
               <div className="relative h-96 bg-muted">
-<img
+<Image
   src={imageUrl}
   alt={`${car.brand} ${car.model}`}
-  className="w-full h-full object-cover"
+  fill
+  unoptimized
+  className="object-cover"
 />
                 {car.featured && (
                   <Badge className="absolute top-4 right-4 bg-primary">Destacado</Badge>
