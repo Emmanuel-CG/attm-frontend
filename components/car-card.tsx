@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import type { Car } from "@/lib/types"
 import { Card, CardContent } from "@/components/ui/card"
@@ -22,13 +21,11 @@ export function CarCard({ car }: CarCardProps) {
       <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 h-full border-border hover:border-primary/50 hover:-translate-y-1">
         
         {/* Imagen segura */}
-        <div className="relative h-56 bg-muted overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt={`${car.brand} ${car.model}`}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+<img
+  src={imageUrl}
+  alt={`${car.brand} ${car.model}`}
+  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+/>
 
           {car.featured && (
             <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground font-semibold px-3 py-1 shadow-lg">

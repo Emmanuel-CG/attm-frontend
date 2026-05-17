@@ -82,12 +82,10 @@ const imageUrl =
             {/* Imagen */}
             <Card className="overflow-hidden">
               <div className="relative h-96 bg-muted">
-<Image
+<img
   src={imageUrl}
   alt={`${car.brand} ${car.model}`}
-  fill
-  unoptimized
-  className="object-cover"
+  className="w-full h-full object-cover"
 />
                 {car.featured && (
                   <Badge className="absolute top-4 right-4 bg-primary">Destacado</Badge>
