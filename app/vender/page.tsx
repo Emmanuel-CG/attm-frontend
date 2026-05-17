@@ -19,6 +19,7 @@ export default function VenderPage() {
   const router = useRouter()
   const [submitted, setSubmitted] = useState(false)
   const [images, setImages] = useState<File[]>([])
+  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     brand: "",
@@ -40,11 +41,15 @@ export default function VenderPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
 
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
+setLoading(true)
+
+if (!isAuthenticated) {
+  setLoading(false)
+  router.push("/login")
+  return
+}
 
     try {
       const form = new FormData()
@@ -76,12 +81,14 @@ const res = await fetch(
       }
 
       setSubmitted(true)
+      setLoading(false)
 
       setTimeout(() => {
         router.push("/mis-autos")
       }, 2000)
     } catch (err) {
       console.log("Error al enviar:", err)
+      setLoading(false)
     }
   }
 
@@ -393,9 +400,13 @@ const res = await fetch(
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" className="flex-1">
-                    Publicar Anuncio
-                  </Button>
+<Button
+  type="submit"
+  className="flex-1"
+  disabled={loading}
+>
+  {loading ? "Publicando..." : "Publicar Anuncio"}
+</Button>
                 </div>
               </form>
             </CardContent>
