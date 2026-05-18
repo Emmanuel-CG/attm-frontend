@@ -62,6 +62,8 @@ images.forEach((image) => {
   form.append("images[]", image)
 })
 
+console.log("TOKEN:", token)
+
 const res = await fetch(
   "https://attm-backend-main-gvzubr.laravel.cloud/api/cars",
   {
@@ -96,7 +98,7 @@ if (!res.ok) {
     } catch (err) {
       console.log("Error al enviar:", err)
       setLoading(false)
-    }
+    } 
   }
 
   if (submitted) {
