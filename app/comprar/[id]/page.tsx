@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
@@ -37,8 +36,12 @@ async function getCar(id: string) {
   return res.json()
 }
 
-export default async function CarDetailPage({ params }: { params: { id: string } }) {
-  const id = params.id // ← ya no se usa await
+export default async function CarDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
   const car = await getCar(id)
 
   if (!car) {

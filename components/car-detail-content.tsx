@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
@@ -89,12 +88,11 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
             {/* Imagen principal */}
             <Card className="overflow-hidden">
               <div className="relative h-96 bg-muted">
-                <Image
-                  src={car.images[0] || "/placeholder.svg?height=400&width=600"}
-                  alt={`${car.brand} ${car.model}`}
-                  fill
-                  className="object-cover"
-                />
+<img
+  src={car.images[0] || "/placeholder.svg?height=400&width=600"}
+  alt={`${car.brand} ${car.model}`}
+  className="w-full h-full object-cover"
+/>
                 {car.featured && <Badge className="absolute top-4 right-4 bg-primary">Destacado</Badge>}
               </div>
             </Card>
