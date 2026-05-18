@@ -60,10 +60,9 @@ export function EditCarModal({ open, onOpenChange, car, onSave }: EditCarModalPr
         alert("Error al guardar los cambios")
         return
       }
+const data = await res.json()
 
-      const updatedCar = await res.json()
-
-      onSave(updatedCar) // mandar el auto actualizado al padre
+onSave(data.car)
       onOpenChange(false)
     } catch (err) {
       console.error(err)
