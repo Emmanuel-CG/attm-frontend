@@ -74,11 +74,18 @@ const res = await fetch(
   }
 )
 
-      if (!res.ok) {
-        const error = await res.json()
-        alert(JSON.stringify(error))
-        return
-      }
+if (!res.ok) {
+
+  const errorText = await res.text()
+
+  console.log(errorText)
+
+  alert(errorText)
+
+  setLoading(false)
+
+  return
+}
 
       setSubmitted(true)
       setLoading(false)
