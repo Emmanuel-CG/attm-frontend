@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { Car } from "@/lib/types"
 
-const API_BASE_URL = "http://localhost:8000/api"
+const API_BASE_URL = "https://attm-backend-main-gvzubr.laravel.cloud/api"
 
 interface EditCarModalProps {
   open: boolean
