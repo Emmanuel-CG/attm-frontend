@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { AuthProvider } from "@/lib/auth-context"
 import { Suspense } from "react"
 import "./globals.css"
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: "AutoMarket México",
@@ -28,6 +29,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <AuthProvider>{children}</AuthProvider>
         </Suspense>
+        <Toaster />
         <Analytics />
       </body>
     </html>
