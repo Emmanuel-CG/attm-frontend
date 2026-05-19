@@ -63,6 +63,7 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showCallModal, setShowCallModal] = useState(false)
   const { toast } = useToast()
+  const [currentImage, setCurrentImage] = useState(0)
   const handleReport = (reason: string) => {
   toast({
     title: "Reporte exitoso",
@@ -86,16 +87,48 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
           {/* Columna principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Imagen principal */}
-            <Card className="overflow-hidden">
-              <div className="relative h-96 bg-muted">
-<img
-  src={car.images[0] || "/placeholder.svg?height=400&width=600"}
-  alt={`${car.brand} ${car.model}`}
-  className="w-full h-full object-cover"
-/>
-                {car.featured && <Badge className="absolute top-4 right-4 bg-primary">Destacado</Badge>}
-              </div>
-            </Card>
+<Card className="overflow-hidden">
+  <div className="relative bg-muted">
+    
+    {/* Imagen principal */}
+    <div className="relative h-96">
+      <img
+        src={car.images[currentImage] || "/placeholder.svg"}
+        alt={`${car.brand} ${car.model}`}
+        className="w-full h-full object-cover transition-all duration-300"
+      />
+
+      {car.featured && (
+        <Badge className="absolute top-4 right-4 bg-primary">
+          Destacado
+        </Badge>
+      )}
+    </div>
+
+    {/* Miniaturas */}
+    {car.images.length > 1 && (
+      <div className="flex gap-3 p-4 overflow-x-auto bg-white">
+        {car.images.map((image, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentImage(index)}
+            className={`relative min-w-[90px] h-20 rounded-lg overflow-hidden border-2 transition-all ${
+              currentImage === index
+                ? "border-primary scale-105"
+                : "border-transparent opacity-70 hover:opacity-100"
+            }`}
+          >
+            <img
+              src={image}
+              alt={`Imagen ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+</Card>
 
             {/* Informacion del auto */}
             <Card>
