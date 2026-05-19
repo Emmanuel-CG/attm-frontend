@@ -3,18 +3,32 @@ import type { Car } from "@/lib/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Gauge, Calendar, Fuel, ArrowRight } from "lucide-react"
-
+import { useState, useEffect } from "react"
 interface CarCardProps {
   car: Car
 }
 
 export function CarCard({ car }: CarCardProps) {
-
+console.log(car.images)
   // si viene vacío, null o undefined → imagen por defecto
-  const imageUrl =
-    car.images && car.images.length > 0
-      ? car.images[0]
-      : "/placeholder.svg?height=224&width=400&query=modern%20car"
+const images: string[] =
+  typeof car.images === "string"
+    ? JSON.parse(car.images)
+    : car.images || []
+
+const [currentImage, setCurrentImage] = useState(0)
+
+useEffect(() => {
+  if (images.length <= 1) return
+
+  const interval = setInterval(() => {
+    setCurrentImage((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    )
+  }, 3000)
+
+  return () => clearInterval(interval)
+}, [images.length])
 
   return (
     <Link href={`/comprar/${car.id}`} className="group">
@@ -23,10 +37,25 @@ export function CarCard({ car }: CarCardProps) {
         {/* Imagen segura */}
         <div className="relative h-56 bg-muted overflow-hidden">
 <img
-  src={imageUrl}
+  src={images[currentImage] || "/placeholder.svg"}
   alt={`${car.brand} ${car.model}`}
-  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
 />
+
+{images.length > 1 && (
+  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+    {images.map((_, index) => (
+      <div
+        key={index}
+        className={`w-2.5 h-2.5 rounded-full transition-all ${
+          currentImage === index
+            ? "bg-white scale-110"
+            : "bg-white/50"
+        }`}
+      />
+    ))}
+  </div>
+)}
 
           {car.featured && (
             <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground font-semibold px-3 py-1 shadow-lg">

@@ -66,6 +66,7 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
  const [currentImage, setCurrentImage] = useState(0)
 
 const images: string[] =
+
   typeof car.images === "string"
     ? JSON.parse(car.images)
     : car.images || []
