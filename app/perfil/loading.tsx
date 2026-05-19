@@ -1,4 +1,3 @@
-import { div as Div } from "react"
 
 export default function LoadingProfile() {
   return (
