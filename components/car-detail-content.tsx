@@ -86,11 +86,40 @@ useEffect(() => {
 useEffect(() => {
   setCurrentImage(0)
 }, [car.id])
-  const handleReport = (reason: string) => {
-  toast({
-    title: "Reporte exitoso",
-    description: `Has reportado este anuncio por: ${reason}`,
-  })
+const handleReport = async (reason: string) => {
+
+  try {
+
+const response = await fetch(
+  `https://attm-backend-main-gvzubr.laravel.cloud/api/cars/${car.id}/report`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          reason,
+        }),
+      }
+    )
+
+    const data = await response.json()
+
+    toast({
+      title: "Reporte enviado",
+      description: data.message,
+    })
+
+  } catch (error) {
+
+    toast({
+      title: "Error",
+      description: "No se pudo enviar el reporte",
+      variant: "destructive",
+    })
+  }
 }
 
   return (
