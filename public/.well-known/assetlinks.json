@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.example.automarket_mexico",
+      "sha256_cert_fingerprints": [
+        "EC:E0:0E:E0:B5:EB:98:A2:9F:8D:18:F7:CC:25:E0:F6:70:1A:66:2B:00:CB:33:9A:91:45:0D:F9:B2:20:88:A1"
+      ]
+    }
+  }
+]
