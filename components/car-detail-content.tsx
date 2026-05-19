@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ContactModal } from "@/components/contact-modal"
 import { CallModal } from "@/components/call-modal"
 
@@ -63,19 +63,30 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showCallModal, setShowCallModal] = useState(false)
   const { toast } = useToast()
-  const [currentImage, setCurrentImage] = useState(0)
-  const images: string[] =
+ const [currentImage, setCurrentImage] = useState(0)
+
+const images: string[] =
   typeof car.images === "string"
     ? JSON.parse(car.images)
-    : car.images
+    : car.images || []
+
+useEffect(() => {
+  if (images.length <= 1) return
+
+  const interval = setInterval(() => {
+    setCurrentImage((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    )
+  }, 3000)
+
+  return () => clearInterval(interval)
+}, [images.length])
   const handleReport = (reason: string) => {
   toast({
     title: "Reporte exitoso",
     description: `Has reportado este anuncio por: ${reason}`,
   })
 }
-  
-
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -101,6 +112,20 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
         alt={`${car.brand} ${car.model}`}
         className="w-full h-full object-cover transition-all duration-300"
       />
+      {images.length > 1 && (
+  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+    {images.map((_, index) => (
+      <div
+        key={index}
+        className={`w-3 h-3 rounded-full transition-all ${
+          currentImage === index
+            ? "bg-white scale-110"
+            : "bg-white/50"
+        }`}
+      />
+    ))}
+  </div>
+)}
 
       {car.featured && (
         <Badge className="absolute top-4 right-4 bg-primary">
@@ -110,27 +135,7 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
     </div>
 
     {/* Miniaturas */}
-    {images.length > 1 && (
-      <div className="flex gap-3 p-4 overflow-x-auto bg-white">
-        {images.map((image, index) => (
-  <div
-    key={index}
-    onClick={() => setCurrentImage(index)}
-    className={`relative min-w-[90px] h-20 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-      currentImage === index
-        ? "border-primary scale-105"
-        : "border-transparent opacity-70 hover:opacity-100"
-    }`}
-  >
-    <img
-      src={image}
-      alt={`Imagen ${index + 1}`}
-      className="w-full h-full object-cover"
-    />
-  </div>
-))}
-      </div>
-    )}
+
   </div>
 </Card>
 
