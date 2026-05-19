@@ -9,7 +9,6 @@ interface CarCardProps {
 }
 
 export function CarCard({ car }: CarCardProps) {
-console.log(car.images)
   // si viene vacío, null o undefined → imagen por defecto
 const images: string[] =
   typeof car.images === "string"
@@ -39,6 +38,7 @@ useEffect(() => {
 <img
   src={images[currentImage] || "/placeholder.svg"}
   alt={`${car.brand} ${car.model}`}
+  loading="lazy"
   className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
 />
 

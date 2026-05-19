@@ -82,6 +82,10 @@ useEffect(() => {
 
   return () => clearInterval(interval)
 }, [images.length])
+
+useEffect(() => {
+  setCurrentImage(0)
+}, [car.id])
   const handleReport = (reason: string) => {
   toast({
     title: "Reporte exitoso",
@@ -111,7 +115,7 @@ useEffect(() => {
       <img
         src={images[currentImage] || "/placeholder.svg"}
         alt={`${car.brand} ${car.model}`}
-        className="w-full h-full object-cover transition-all duration-300"
+        className="w-full h-full object-cover transition-all duration-700"
       />
       {images.length > 1 && (
   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
