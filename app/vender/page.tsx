@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { useAuth } from "@/lib/auth-context"
@@ -17,6 +17,11 @@ import { Car, Upload, CheckCircle2 } from "lucide-react"
 export default function VenderPage() {
   const { isAuthenticated, user, token } = useAuth()
   const router = useRouter()
+  useEffect(() => {
+  if (!isAuthenticated) {
+    router.push("/login")
+  }
+}, [isAuthenticated, router])
   const [submitted, setSubmitted] = useState(false)
   const [images, setImages] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
@@ -45,10 +50,14 @@ export default function VenderPage() {
 
 setLoading(true)
 
+useEffect(() => {
+  if (!isAuthenticated) {
+    router.push("/login")
+  }
+}, [isAuthenticated, router])
+
 if (!isAuthenticated) {
-  setLoading(false)
-  router.push("/login")
-  return
+  return null
 }
 
     try {
