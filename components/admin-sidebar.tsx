@@ -4,9 +4,11 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { BarChart3, Users, Car, FileText, Settings, LogOut } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const { logout, user } = useAuth()
 
   const menuItems = [
@@ -48,13 +50,21 @@ export function AdminSidebar() {
           <p className="text-xs text-blue-100">Usuario Admin</p>
           <p className="text-sm font-semibold truncate">{user?.email}</p>
         </div>
-        <button
-          onClick={logout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-blue-100 hover:bg-blue-600 rounded-lg transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Cerrar Sesión</span>
-        </button>
+<button
+  onClick={async () => {
+
+    await logout()
+
+    router.push("/login")
+  }}
+  className="w-full flex items-center gap-3 px-4 py-3 text-blue-100 hover:bg-blue-600 rounded-lg transition-colors"
+>
+  <LogOut className="w-5 h-5" />
+
+  <span>
+    Cerrar Sesión
+  </span>
+</button>
       </div>
     </aside>
   )
