@@ -64,7 +64,10 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
   const [showCallModal, setShowCallModal] = useState(false)
   const { toast } = useToast()
   const [currentImage, setCurrentImage] = useState(0)
-  console.log(car.images)
+  const images: string[] =
+  typeof car.images === "string"
+    ? JSON.parse(car.images)
+    : car.images
   const handleReport = (reason: string) => {
   toast({
     title: "Reporte exitoso",
@@ -94,7 +97,7 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
     {/* Imagen principal */}
     <div className="relative h-96">
       <img
-        src={car.images[currentImage] || "/placeholder.svg"}
+        src={images[currentImage] || "/placeholder.svg"}
         alt={`${car.brand} ${car.model}`}
         className="w-full h-full object-cover transition-all duration-300"
       />
@@ -107,9 +110,9 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
     </div>
 
     {/* Miniaturas */}
-    {car.images.length > 1 && (
+    {images.length > 1 && (
       <div className="flex gap-3 p-4 overflow-x-auto bg-white">
-        {car.images.map((image, index) => (
+        {images.map((image, index) => (
           <button
             key={index}
             onClick={() => setCurrentImage(index)}
