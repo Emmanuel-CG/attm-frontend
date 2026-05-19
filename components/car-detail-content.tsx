@@ -1,11 +1,12 @@
 "use client"
 
+import { useAuth } from "@/lib/auth-context"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useAuth } from "@/lib/auth"
+
 import {
   MapPin,
   Gauge,
