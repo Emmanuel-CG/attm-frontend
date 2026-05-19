@@ -6,9 +6,15 @@ import { Suspense } from "react"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "AutoMarket México - Compra y Venta de Autos Usados",
+  title: "AutoMarket México",
   description: "La mejor plataforma para comprar y vender autos usados en México",
   generator: "v0.app",
+
+  icons: {
+    icon: "/icono.png",
+    shortcut: "/icono.png",
+    apple: "/icono.png",
+  },
 }
 
 export default function RootLayout({
