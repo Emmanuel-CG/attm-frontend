@@ -57,18 +57,6 @@ export default async function CarDetailPage({
       </div>
     )
   }
-
-const placeholderImages = [
-  "/chevrolet-aveo-plata-2019.jpg",
-  "/honda-civic-gris-2019.jpg",
-  "/mazda-cx5-rojo-suv-2022.jpg",
-];
-
-const imageUrl =
-  car.images && car.images.length > 0
-    ? car.images[0]
-    : placeholderImages[Math.floor(Math.random() * placeholderImages.length)];
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Navbar />
@@ -86,7 +74,7 @@ const imageUrl =
             <Card className="overflow-hidden">
               <div className="relative h-96 bg-muted">
 <img
-  src={imageUrl}
+  src={car.images?.[0] || "/placeholder.svg"}
   alt={`${car.brand} ${car.model}`}
   className="w-full h-full object-cover"
 />
