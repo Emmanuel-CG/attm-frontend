@@ -113,21 +113,16 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
     {images.length > 1 && (
       <div className="flex gap-3 p-4 overflow-x-auto bg-white">
         {images.map((image, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentImage(index)}
-            className={`relative min-w-[90px] h-20 rounded-lg overflow-hidden border-2 transition-all ${
-              currentImage === index
-                ? "border-primary scale-105"
-                : "border-transparent opacity-70 hover:opacity-100"
-            }`}
-          >
-            <img
-              src={image}
-              alt={`Imagen ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
-          </button>
+<div
+  key={index}
+  onClick={() => setCurrentImage(index)}
+  className={`relative min-w-[90px] h-20 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+    currentImage === index
+      ? "border-primary scale-105"
+      : "border-transparent opacity-70 hover:opacity-100"
+  }`}
+>
+          </div>
         ))}
       </div>
     )}
