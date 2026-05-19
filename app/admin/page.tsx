@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Users, Car, FileText, TrendingUp } from "lucide-react"
 
-const API_URL = "http://localhost:8000/api"
+const API_URL = "https://attm-backend-main-gvzubr.laravel.cloud/api"
 
 export default function AdminDashboard() {
   const { user, isAdmin, token } = useAuth()

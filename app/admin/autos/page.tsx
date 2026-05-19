@@ -10,7 +10,7 @@ import {
   Clock,
 } from "lucide-react"
 
-const API_URL = "http://localhost:8000/api"
+const API_URL = "https://attm-backend-main-gvzubr.laravel.cloud/api"
 
 interface AdminCar {
   id: number
