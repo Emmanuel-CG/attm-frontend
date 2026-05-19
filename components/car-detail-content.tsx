@@ -64,6 +64,7 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
   const [showCallModal, setShowCallModal] = useState(false)
   const { toast } = useToast()
   const [currentImage, setCurrentImage] = useState(0)
+  console.log(car.images)
   const handleReport = (reason: string) => {
   toast({
     title: "Reporte exitoso",
