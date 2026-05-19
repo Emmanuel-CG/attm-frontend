@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useAuth } from "@/lib/auth"
 import {
   MapPin,
   Gauge,
@@ -63,6 +64,7 @@ export function CarDetailContent({ car }: CarDetailContentProps) {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showCallModal, setShowCallModal] = useState(false)
   const { toast } = useToast()
+  const { token, isAuthenticated } = useAuth()
  const [currentImage, setCurrentImage] = useState(0)
 
 const images: string[] =
@@ -88,15 +90,27 @@ useEffect(() => {
 }, [car.id])
 const handleReport = async (reason: string) => {
 
+  if (!isAuthenticated) {
+
+    toast({
+      title: "Inicia sesión",
+      description: "Debes iniciar sesión para reportar",
+      variant: "destructive",
+    })
+
+    return
+  }
+
   try {
 
-const response = await fetch(
-  `https://attm-backend-main-gvzubr.laravel.cloud/api/cars/${car.id}/report`,
+    const response = await fetch(
+      `https://attm-backend-main-gvzubr.laravel.cloud/api/cars/${car.id}/report`,
       {
         method: "POST",
 
         headers: {
           "Content-Type": "application/json",
+          "Authorization": token || "",
         },
 
         body: JSON.stringify({
@@ -106,6 +120,17 @@ const response = await fetch(
     )
 
     const data = await response.json()
+
+    if (!response.ok) {
+
+      toast({
+        title: "Error",
+        description: data.error,
+        variant: "destructive",
+      })
+
+      return
+    }
 
     toast({
       title: "Reporte enviado",
