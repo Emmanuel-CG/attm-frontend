@@ -143,7 +143,6 @@ useEffect(() => {
 
   </div>
 </Card>
-
             {/* Informacion del auto */}
             <Card>
               <CardContent className="p-6">
