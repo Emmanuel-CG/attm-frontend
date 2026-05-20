@@ -12,6 +12,7 @@ interface Report {
   date: string
   severity: "low" | "medium" | "high"
   resolved: boolean
+  car_id?: number
 }
 
 export default function ReportesAdmin() {
@@ -53,6 +54,7 @@ useEffect(() => {
         (report: any) => ({
 
           id: report.id,
+          car_id: report.car_id,
 
           type: report.reason,
 
@@ -186,6 +188,20 @@ useEffect(() => {
                 </div>
               </div>
               <p className="text-xs text-gray-500">Reportado: {report.date}</p>
+              {report.car_id && (
+
+  <button
+    onClick={() =>
+      window.open(
+        `/comprar/${report.car_id}`,
+        "_blank"
+      )
+    }
+    className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition"
+  >
+    Ver Publicación
+  </button>
+)}
             </div>
           ))}
         </div>
