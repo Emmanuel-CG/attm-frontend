@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { TrendingUp, AlertCircle, Users } from "lucide-react"
 
 interface Report {
-  id: string
+  id: number
   type: string
   description: string
   date: string
@@ -19,48 +19,75 @@ export default function ReportesAdmin() {
   const router = useRouter()
   const [reports, setReports] = useState<Report[]>([])
 
-  useEffect(() => {
-    if (!isAdmin) {
-      router.push("/login")
-      return
-    }
+useEffect(() => {
 
-    // Datos simulados de reportes
-    setReports([
-      {
-        id: "1",
-        type: "Anuncio Fraudulento",
-        description: "Posible estafa detectada en anuncio de Toyota Corolla",
-        date: "2024-11-12",
-        severity: "high",
-        resolved: false,
-      },
-      {
-        id: "2",
-        type: "Usuario Sospechoso",
-        description: "Múltiples reportes contra usuario user123",
-        date: "2024-11-11",
-        severity: "high",
-        resolved: false,
-      },
-      {
-        id: "3",
-        type: "Fotos Inapropiadas",
-        description: "Imágenes no relacionadas con el vehículo",
-        date: "2024-11-10",
-        severity: "medium",
-        resolved: true,
-      },
-      {
-        id: "4",
-        type: "Precio Sospechoso",
-        description: "Precio significativamente bajo comparado con el mercado",
-        date: "2024-11-09",
-        severity: "low",
-        resolved: true,
-      },
-    ])
-  }, [isAdmin, router])
+  if (!isAdmin) {
+
+    router.push("/login")
+
+    return
+  }
+
+  const fetchReports = async () => {
+
+    try {
+
+      const token =
+        localStorage.getItem("authToken")
+
+      const response = await fetch(
+        "https://attm-backend-main-gvzubr.laravel.cloud/api/admin/reports",
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: token || "",
+          },
+        }
+      )
+
+      const data = await response.json()
+
+      console.log(data)
+
+      const formattedReports = data.map(
+        (report: any) => ({
+
+          id: report.id,
+
+          type: report.reason,
+
+          description:
+            `Reporte en ${report.car}`,
+
+          date: report.created_at,
+
+          severity:
+            report.reason ===
+            "Anuncio Fraudulento"
+              ? "high"
+              : report.reason ===
+                "Usuario Sospechoso"
+              ? "high"
+              : report.reason ===
+                "Fotos Inapropiadas"
+              ? "medium"
+              : "low",
+
+          resolved: false,
+        })
+      )
+
+      setReports(formattedReports)
+
+    } catch (error) {
+
+      console.error(error)
+    }
+  }
+
+  fetchReports()
+
+}, [isAdmin, router])
 
   const getSeverityColor = (severity: Report["severity"]) => {
     switch (severity) {
