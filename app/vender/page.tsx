@@ -44,71 +44,91 @@ export default function VenderPage() {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (loading) return
+const handleSubmit = async (
+  e: React.FormEvent
+) => {
 
-setLoading(true)
+  e.preventDefault()
 
-useEffect(() => {
+  if (loading) return
+
   if (!isAuthenticated) {
+
     router.push("/login")
+
+    return
   }
-}, [isAuthenticated, router])
 
-if (!isAuthenticated) {
-  return null
-}
+  setLoading(true)
 
-    try {
-      const form = new FormData()
+  try {
 
-Object.entries(formData).forEach(([key, value]) => {
-  form.append(key, value)
-})
+    const form = new FormData()
 
-images.forEach((image) => {
-  form.append("images[]", image)
-})
+    Object.entries(formData).forEach(
+      ([key, value]) => {
 
-console.log("TOKEN:", token)
+        form.append(key, value)
+      }
+    )
 
-const res = await fetch(
-  "https://attm-backend-main-gvzubr.laravel.cloud/api/cars",
-  {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      ...(token ? { Authorization: token } : {}),
-    },
-    body: form,
-  }
-)
+    images.forEach((image) => {
 
-if (!res.ok) {
+      form.append("images[]", image)
+    })
 
-  const errorText = await res.text()
+    console.log("TOKEN:", token)
 
-  console.log(errorText)
+    const res = await fetch(
+      "https://attm-backend-main-gvzubr.laravel.cloud/api/cars",
+      {
+        method: "POST",
 
-  alert(errorText)
+        headers: {
+          Accept: "application/json",
+          ...(token
+            ? { Authorization: token }
+            : {}),
+        },
 
-  setLoading(false)
+        body: form,
+      }
+    )
 
-  return
-}
+    if (!res.ok) {
 
-      setSubmitted(true)
+      const errorText =
+        await res.text()
+
+      console.log(errorText)
+
+      alert(errorText)
+
       setLoading(false)
 
-      setTimeout(() => {
-        router.push("/mis-autos")
-      }, 2000)
-    } catch (err) {
-      console.log("Error al enviar:", err)
-      setLoading(false)
-    } 
+      return
+    }
+
+    setSubmitted(true)
+
+    setLoading(false)
+
+    setTimeout(() => {
+
+      router.push("/mis-autos")
+
+    }, 2000)
+
+  } catch (err) {
+
+    console.log(
+      "Error al enviar:",
+      err
+    )
+
+    setLoading(false)
   }
+}
 
   if (submitted) {
     return (
