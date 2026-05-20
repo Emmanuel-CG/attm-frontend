@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { TrendingUp, AlertCircle, Users } from "lucide-react"
+import Link from "next/link"
 
 interface Report {
   id: number
@@ -187,20 +188,19 @@ useEffect(() => {
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-gray-500">Reportado: {report.date}</p>
-              {report.car_id && (
+<p className="text-xs text-gray-500">
+  Reportado: {report.date}
+</p>
 
-  <button
-    onClick={() =>
-      window.open(
-        `/comprar/${report.car_id}`,
-        "_blank"
-      )
-    }
-    className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition"
+{report.car_id && (
+
+  <Link
+    href={`/comprar/${report.car_id}`}
+    target="_blank"
+    className="inline-block mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition"
   >
     Ver Publicación
-  </button>
+  </Link>
 )}
             </div>
           ))}
