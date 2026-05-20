@@ -25,6 +25,7 @@ export default function VenderPage() {
   const [submitted, setSubmitted] = useState(false)
   const [images, setImages] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
+  const [aiPrice, setAiPrice] = useState<number | null>(null)
 
   const [formData, setFormData] = useState({
     brand: "",
@@ -39,10 +40,99 @@ export default function VenderPage() {
     description: "",
     phone: "",
   })
+const getAIPrediction = async (
+  data = formData
+) => {
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+  try {
+
+    if (
+      !data.brand ||
+      !data.model ||
+      !data.year ||
+      !data.mileage ||
+      !data.transmission ||
+      !data.fuelType
+    ) {
+      return
+    }
+
+    let transmission =
+      data.transmission
+
+    if (transmission === "Automática") {
+      transmission = "Automatic"
+    }
+
+    let fuel =
+      data.fuelType
+
+    if (fuel === "Gasolina") {
+      fuel = "Petrol"
+    }
+
+    if (fuel === "Diésel") {
+      fuel = "Diesel"
+    }
+
+    if (fuel === "Híbrido") {
+      fuel = "Hybrid"
+    }
+
+    if (fuel === "Eléctrico") {
+      fuel = "Electric"
+    }
+
+    const res = await fetch(
+      "https://automarket-ia.onrender.com/predict",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          Brand: data.brand,
+          Model: data.model,
+          Model_Ye: Number(data.year),
+          Kilometer: Number(data.mileage),
+          Fuel_Type: fuel,
+          Transmiss: transmission,
+        }),
+      }
+    )
+
+    const result = await res.json()
+
+    setFormData((prev) => ({
+      ...prev,
+      price: result.price.toString(),
+    }))
+
+  } catch (err) {
+
+    console.log(
+      "Error IA:",
+      err
+    )
   }
+}
+const handleChange = (
+  field: string,
+  value: string
+) => {
+
+  const updatedData = {
+    ...formData,
+    [field]: value
+  }
+
+  setFormData(updatedData)
+
+  getAIPrediction(updatedData)
+}
 
 const handleSubmit = async (
   e: React.FormEvent
@@ -108,6 +198,9 @@ const handleSubmit = async (
 
       return
     }
+    const data = await res.json()
+
+    setAiPrice(data.car.ai_price)
 
     setSubmitted(true)
 
@@ -141,6 +234,17 @@ const handleSubmit = async (
                 <CheckCircle2 className="h-8 w-8 text-green-600" />
               </div>
               <h2 className="text-2xl font-bold mb-2">Anuncio Publicado</h2>
+              {aiPrice && (
+  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
+    <p className="text-sm text-gray-500">
+      Precio sugerido por IA
+    </p>
+
+    <p className="text-3xl font-bold text-blue-600">
+      ${aiPrice.toLocaleString()} MXN
+    </p>
+  </div>
+)}
               <p className="text-muted-foreground mb-4">Tu auto ha sido publicado exitosamente</p>
               <p className="text-sm text-muted-foreground">Redirigiendo a Mis Autos...</p>
             </CardContent>
@@ -176,6 +280,7 @@ const handleSubmit = async (
                   <div className="space-y-2">
                     <Label htmlFor="brand">Marca *</Label>
                     <Select value={formData.brand} onValueChange={(value) => handleChange("brand", value)} required>
+                      
                       <SelectTrigger>
                         <SelectValue placeholder="Selecciona la marca" />
                       </SelectTrigger>
@@ -218,7 +323,44 @@ const handleSubmit = async (
                       required
                     />
                   </div>
+<div className="space-y-2">
 
+  {formData.price && (
+    <div className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-2xl p-4 shadow-lg">
+      
+      <p className="text-sm opacity-80">
+        Precio sugerido por IA
+      </p>
+
+      <p className="text-3xl font-bold">
+        ${Number(formData.price).toLocaleString()} MXN
+      </p>
+
+      <p className="text-xs mt-1 opacity-70">
+        Basado en vehículos similares del mercado
+      </p>
+    </div>
+  )}
+
+  <Label htmlFor="price">
+    Tu precio de venta *
+  </Label>
+
+  <Input
+    id="price"
+    type="number"
+    placeholder="250000"
+    min="0"
+    value={formData.price}
+    onChange={(e) =>
+      handleChange(
+        "price",
+        e.target.value
+      )
+    }
+    required
+  />
+</div>
                   <div className="space-y-2">
                     <Label htmlFor="price">Precio (MXN) *</Label>
                     <Input
